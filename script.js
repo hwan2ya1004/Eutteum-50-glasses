@@ -1,8 +1,9 @@
 const sliderContainer = document.querySelector(".slider");
 
-// 백엔드 프록시 서버로부터 이미지를 가져오는 함수
+// Netlify Functions의 프록시된 API 호출
 async function fetchImages(query) {
-    const response = await fetch(`http://localhost:3000/api/images?q=${query}`);
+    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
+    if (!response.ok) throw new Error("Failed to fetch images");
     const data = await response.json();
     return data.hits;
 }
@@ -42,4 +43,6 @@ function activateSlider() {
 fetchImages("fashion").then(images => {
     displayImages(images);
     activateSlider();
+}).catch(error => {
+    console.error("이미지를 가져오는 중 오류 발생:", error);
 });
