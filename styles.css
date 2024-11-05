@@ -6,6 +6,7 @@
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px 0;
     text-align: center;
+    z-index: 10;
 }
 
 .navbar ul {
@@ -44,28 +45,4 @@
 
 .slide.active {
     opacity: 1;
-}
-
-/* 제품 섹션 스타일 */
-.products {
-    padding: 50px;
-    text-align: center;
-}
-
-.product-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.product {
-    width: 300px;
-    height: 300px;
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.5s;
-}
-
-.product:hover {
-    transform: scale(1.1);
 }
