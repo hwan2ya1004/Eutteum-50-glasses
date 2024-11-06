@@ -2,7 +2,7 @@ const sliderContainer = document.querySelector(".slider");
 
 // Netlify Functions의 프록시된 API 호출
 async function fetchImages(query) {
-    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
+    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}&per_page=5`); // 원하는 이미지 개수로 제한
     if (!response.ok) throw new Error("Failed to fetch images");
     const data = await response.json();
     return data.hits;
@@ -10,7 +10,8 @@ async function fetchImages(query) {
 
 // 슬라이더에 이미지 추가 함수
 function displayImages(images) {
-    images.forEach((image, index) => {
+    const numberOfSlides = 5; // 원하는 슬라이드 개수 설정
+    images.slice(0, numberOfSlides).forEach((image, index) => {
         const slide = document.createElement("div");
         slide.classList.add("slide");
         if (index === 0) slide.classList.add("active");
@@ -19,7 +20,7 @@ function displayImages(images) {
     });
 }
 
-// 슬라이더 기능 구현
+// 슬라이더 기능 구현 (변경 없음)
 function activateSlider() {
     let currentIndex = 0;
     const slides = document.querySelectorAll(".slide");
