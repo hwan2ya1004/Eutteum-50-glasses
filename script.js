@@ -1,36 +1,46 @@
 const sliderContainer = document.querySelector(".slider");
 
-// Netlify Functions의 프록시된 API 호출
+// Netlify Functions의 프록시된 API 호출 및 캐싱
 async function fetchImages(query) {
-    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}&per_page=10`); // 이미지 10개 요청
-    if (!response.ok) throw new Error("Failed to fetch images");
-    const data = await response.json();
-    console.log('가져온 이미지 개수:', data.hits.length);
-    return data.hits;
+    const cachedData = localStorage.getItem('cachedImages');
+    const cacheTimestamp = localStorage.getItem('cacheTimestamp');
+    const now = Date.now();
+
+    // 하루(24시간 * 60분 * 60초 * 1000밀리초)
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (cachedData && cacheTimestamp && (now - cacheTimestamp < oneDay)) {
+        // 캐시된 데이터가 있고, 하루가 지나지 않았다면 캐시 사용
+        console.log('캐시된 이미지를 사용합니다.');
+        return JSON.parse(cachedData);
+    } else {
+        // 새로운 데이터를 가져와서 캐시에 저장
+        const response = await fetch(`/.netlify/functions/fetchImages?q=안경&per_page=5`);
+        if (!response.ok) throw new Error("Failed to fetch images");
+        const data = await response.json();
+        const images = data.hits;
+
+        // 캐시에 데이터와 현재 시간을 저장
+        localStorage.setItem('cachedImages', JSON.stringify(images));
+        localStorage.setItem('cacheTimestamp', now.toString());
+
+        console.log('새로운 이미지를 가져와 캐시에 저장했습니다.');
+        return images;
+    }
 }
 
 // 슬라이더에 이미지 추가 함수
 function displayImages(images) {
-    let loadedImages = 0;
     images.forEach((image, index) => {
-        console.log(`이미지 ${index + 1} URL:`, image.webformatURL);
-        const img = new Image();
-        img.src = image.webformatURL;
-        img.onload = () => {
-            const slide = document.createElement("div");
-            slide.classList.add("slide");
-            if (index === 0) slide.classList.add("active");
-            slide.style.backgroundImage = `url(${image.webformatURL})`;
-            sliderContainer.appendChild(slide);
-
-            loadedImages++;
-            if (loadedImages === images.length) {
-                activateSlider();
-            }
-        };
-        img.onerror = () => {
-            console.error(`이미지 로드 실패: ${image.webformatURL}`);
-        };
+        const slide = document.createElement("div");
+        slide.classList.add("slide");
+        if (index === 0) {
+            slide.classList.add("active");
+        } else {
+            slide.classList.add("next");
+        }
+        slide.style.backgroundImage = `url(${image.webformatURL})`;
+        sliderContainer.appendChild(slide);
     });
 }
 
@@ -39,16 +49,24 @@ function activateSlider() {
     let currentIndex = 0;
     const slides = document.querySelectorAll(".slide");
 
-    function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.remove("active");
-            if (i === index) slide.classList.add("active");
-        });
+    function showSlide(nextIndex) {
+        slides[currentIndex].classList.remove("active");
+        slides[currentIndex].classList.add("prev");
+
+        slides[nextIndex].classList.remove("next");
+        slides[nextIndex].classList.add("active");
+
+        // 이전 슬라이드의 클래스를 정리하기 위해 약간의 딜레이를 줍니다.
+        setTimeout(() => {
+            slides[currentIndex].classList.remove("prev");
+            slides[currentIndex].classList.add("next");
+            currentIndex = nextIndex;
+        }, 1000); // 전환 시간과 동일하게 설정
     }
 
     function nextSlide() {
-        currentIndex = (currentIndex + 1) % slides.length;
-        showSlide(currentIndex);
+        const nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
     }
 
     setInterval(nextSlide, 3000);
@@ -61,6 +79,7 @@ fetchImages("glasses").then(images => {
         return;
     }
     displayImages(images);
+    activateSlider();
 }).catch(error => {
     console.error("이미지를 가져오는 중 오류 발생:", error);
 });
