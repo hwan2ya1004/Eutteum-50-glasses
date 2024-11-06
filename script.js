@@ -69,7 +69,7 @@ function activateSlider() {
         showSlide(nextIndex);
     }
 
-    setInterval(nextSlide, 3000);
+    setInterval(nextSlide, 5000);
 }
 
 // 이미지 가져오기 및 슬라이더 활성화
