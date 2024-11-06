@@ -8,10 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Netlify Functions의 프록시된 API 호출
     async function fetchImages(query) {
-        const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
-        if (!response.ok) throw new Error("Failed to fetch images");
-        const data = await response.json();
-        return data.hits;
+        try {
+            const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
+            if (!response.ok) throw new Error("Failed to fetch images");
+            const data = await response.json();
+            return data.hits;
+        } catch (error) {
+            console.error("이미지를 가져오는 중 오류 발생:", error);
+            return [];
+        }
     }
 
     // 슬라이더에 이미지 추가 함수
@@ -20,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const slide = document.createElement("div");
             slide.classList.add("slide");
             if (index === 0) slide.classList.add("active");
-            slide.style.backgroundImage = `url(${image.webformatURL})`;
+            slide.style.backgroundImage = `url(${image.webformatURL})`; // 배경 이미지 설정
             sliderContainer.appendChild(slide);
         });
     }
@@ -46,7 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 이미지 가져오기 및 슬라이더 활성화
-    fetchImages("fashion").then(images => {
+    fetchImages("sunglasses").then(images => {
+        if (images.length === 0) {
+            console.error("No images found or failed to load images.");
+            return;
+        }
         displayImages(images);
         activateSlider();
     }).catch(error => {
