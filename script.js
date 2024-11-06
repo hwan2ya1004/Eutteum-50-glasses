@@ -2,7 +2,7 @@ const sliderContainer = document.querySelector(".slider");
 
 // Netlify Functions의 프록시된 API 호출
 async function fetchImages(query) {
-    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
+    const response = await fetch(/.netlify/functions/fetchImages?q=${query});
     if (!response.ok) throw new Error("Failed to fetch images");
     const data = await response.json();
     return data.hits;
@@ -14,7 +14,7 @@ function displayImages(images) {
         const slide = document.createElement("div");
         slide.classList.add("slide");
         if (index === 0) slide.classList.add("active");
-        slide.style.backgroundImage = `url(${image.webformatURL})`; // 템플릿 리터럴을 이용한 이미지 URL 설정
+        slide.style.backgroundImage = url(${image.webformatURL});
         sliderContainer.appendChild(slide);
     });
 }
