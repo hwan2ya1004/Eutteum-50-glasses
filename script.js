@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const sliderContainer = document.querySelector(".slider");
 
+    if (!sliderContainer) {
+        console.error("Error: .slider element not found in the DOM.");
+        return;
+    }
+
     // Netlify Functions의 프록시된 API 호출
     async function fetchImages(query) {
         const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
