@@ -1,27 +1,31 @@
+/* 추가할 폰트 임포트 */
+@import url('https://fonts.googleapis.com/css2?family=NanumGothic:wght@700&display=swap');
+
 /* 네비게이션 바 스타일 */
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.9); /* 배경색 수정 */
     padding: 15px 20px;
     display: flex;
     align-items: center;
+    justify-content: space-between; /* 로고와 메뉴 사이 공간 분배 */
     z-index: 10;
 }
 
 .navbar .logo {
-    color: white;
-    font-size: 24px;
+    font-family: 'NanumGothic', sans-serif;
+    color: #ffcc00; /* 글자 색상 수정 */
+    font-size: 28px; /* 폰트 크기 수정 */
     font-weight: bold;
-    margin-right: auto;
 }
 
 .navbar ul {
-    list-style: none;
+    display: flex;
     margin: 0;
     padding: 0;
-    display: flex;
+    list-style: none;
 }
 
 .navbar li {
@@ -50,7 +54,7 @@
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: transform 2s ease-in-out; /* 슬라이드 전환 시간 조정 (2초) */
+    transition: transform 2s ease-in-out;
 }
 
 .slide.prev {
@@ -67,8 +71,8 @@
 
 /* 푸터 스타일 */
 .footer {
-    background-color: #333;
-    color: white;
+    background-color: #222; /* 배경색 수정 */
+    color: #ddd; /* 글자 색상 수정 */
     text-align: center;
     padding: 20px 0;
 }
