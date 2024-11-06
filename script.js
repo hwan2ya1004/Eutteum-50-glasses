@@ -55,7 +55,7 @@ function activateSlider() {
 }
 
 // 이미지 가져오기 및 슬라이더 활성화
-fetchImages("fashion").then(images => {
+fetchImages("glasses").then(images => {
     if (images.length === 0) {
         console.error("검색된 이미지가 없습니다.");
         return;
