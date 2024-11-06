@@ -1,30 +1,48 @@
-// 예제 데이터 (실제로는 API에서 가져올 수 있음)
-const products = [
-    { name: "Sunglass Model 1", price: "₩250,000", imageUrl: "image1.jpg" },
-    { name: "Sunglass Model 2", price: "₩300,000", imageUrl: "image2.jpg" },
-    { name: "Sunglass Model 3", price: "₩275,000", imageUrl: "image3.jpg" },
-    // 추가 제품들
-];
+const sliderContainer = document.querySelector(".slider");
 
-// 제품 카드를 생성하여 페이지에 추가하는 함수
-function displayProducts(products) {
-    const productGrid = document.getElementById("productGrid");
+// Netlify Functions의 프록시된 API 호출
+async function fetchImages(query) {
+    const response = await fetch(`/.netlify/functions/fetchImages?q=${query}`);
+    if (!response.ok) throw new Error("Failed to fetch images");
+    const data = await response.json();
+    return data.hits;
+}
 
-    products.forEach(product => {
-        const productCard = document.createElement("div");
-        productCard.classList.add("product-card");
-
-        productCard.innerHTML = `
-            <img src="${product.imageUrl}" alt="${product.name}">
-            <h2>${product.name}</h2>
-            <p class="price">${product.price}</p>
-        `;
-
-        productGrid.appendChild(productCard);
+// 슬라이더에 이미지 추가 함수
+function displayImages(images) {
+    images.forEach((image, index) => {
+        const slide = document.createElement("div");
+        slide.classList.add("slide");
+        if (index === 0) slide.classList.add("active");
+        slide.style.backgroundImage = `url(${image.webformatURL})`; // 템플릿 리터럴로 수정
+        sliderContainer.appendChild(slide);
     });
 }
 
-// 페이지 로드 시 제품 표시
-document.addEventListener("DOMContentLoaded", () => {
-    displayProducts(products);
+// 슬라이더 기능 구현
+function activateSlider() {
+    let currentIndex = 0;
+    const slides = document.querySelectorAll(".slide");
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            if (i === index) slide.classList.add("active");
+        });
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        showSlide(currentIndex);
+    }
+
+    setInterval(nextSlide, 3000);
+}
+
+// 이미지 가져오기 및 슬라이더 활성화
+fetchImages("fashion").then(images => {
+    displayImages(images);
+    activateSlider();
+}).catch(error => {
+    console.error("이미지를 가져오는 중 오류 발생:", error);
 });
