@@ -28,24 +28,30 @@
 
 /* 이미지 슬라이더 스타일 */
 .slider {
-    position: relative; /* 부모 요소를 기준으로 자식들의 위치를 결정 */
+    position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
 }
 
 .slide {
-    position: absolute; /* 슬라이드들을 겹치도록 설정 */
+    position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+}
+
+.slide.prev {
+    transform: translateX(-100%);
 }
 
 .slide.active {
-    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide.next {
+    transform: translateX(100%);
 }
